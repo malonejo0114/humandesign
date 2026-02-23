@@ -4,6 +4,7 @@ import { extname, join } from 'node:path';
 import { toUtcWithAudit } from '../src/lib/time.mjs';
 import { fetchBodyGraph } from '../src/lib/bodygraph.mjs';
 import { createBasicReportHtml } from '../src/lib/report.mjs';
+import { createChartCacheKey } from '../src/lib/cache-key.mjs';
 
 const root = join(process.cwd(), 'src/web');
 const mime = {
@@ -12,6 +13,8 @@ const mime = {
   '.css': 'text/css; charset=utf-8',
   '.json': 'application/json; charset=utf-8'
 };
+
+const chartCache = new Map();
 
 const sampleHd = {
   definedCenters: ['head', 'ajna', 'sacral', 'solarPlexus'],
@@ -46,7 +49,15 @@ const server = createServer(async (req, res) => {
       const body = await readJson(req);
       const localTime = body.localTime || '12:00:00';
       const timezone = body.timezone || 'Asia/Seoul';
-      const utcAudit = toUtcWithAudit({ localDate: body.localDate, localTime, timezone });
+      const input = { localDate: body.localDate, localTime, timezone, mode: body.mode };
+      const cacheKey = createChartCacheKey(input);
+
+      if (chartCache.has(cacheKey)) {
+        sendJson(res, 200, { ...chartCache.get(cacheKey), cacheHit: true });
+        return;
+      }
+
+      const utcAudit = toUtcWithAudit(input);
 
       let hd = sampleHd;
       if (process.env.BODYGRAPH_API_KEY) {
@@ -57,7 +68,9 @@ const server = createServer(async (req, res) => {
         }
       }
 
-      sendJson(res, 200, { input: { localDate: body.localDate, localTime, timezone, mode: body.mode }, utcAudit, hd });
+      const payload = { input, utcAudit, hd, cacheHit: false };
+      chartCache.set(cacheKey, payload);
+      sendJson(res, 200, payload);
       return;
     } catch (error) {
       sendJson(res, 400, { error: error instanceof Error ? error.message : 'invalid request' });

@@ -22,6 +22,7 @@ function renderSummary(payload) {
     <li>Authority: ${meta.authority ?? 'unknown'}</li>
     <li>UTC: ${payload.utcAudit.utcIso}</li>
     <li>입력 모드: ${payload.input.mode ?? 'exact'}</li>
+    <li>캐시: ${payload.cacheHit ? 'HIT' : 'MISS'}</li>
   `;
 }
 

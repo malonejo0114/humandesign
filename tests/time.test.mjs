@@ -33,3 +33,21 @@ test('rejects impossible date values', () => {
     });
   }, /day out of range/);
 });
+
+test('supports boundary minute checks (+1 minute)', () => {
+  const base = toUtcWithAudit({ localDate: '2010-03-20', localTime: '00:00:00', timezone: 'Asia/Seoul' });
+  const plus = toUtcWithAudit({ localDate: '2010-03-20', localTime: '00:01:00', timezone: 'Asia/Seoul' });
+
+  const baseMs = Date.parse(base.utcIso);
+  const plusMs = Date.parse(plus.utcIso);
+  assert.equal(plusMs - baseMs, 60_000);
+});
+
+test('supports boundary minute checks (-1 minute)', () => {
+  const base = toUtcWithAudit({ localDate: '2010-03-20', localTime: '00:00:00', timezone: 'Asia/Seoul' });
+  const minus = toUtcWithAudit({ localDate: '2010-03-19', localTime: '23:59:00', timezone: 'Asia/Seoul' });
+
+  const baseMs = Date.parse(base.utcIso);
+  const minusMs = Date.parse(minus.utcIso);
+  assert.equal(baseMs - minusMs, 60_000);
+});
