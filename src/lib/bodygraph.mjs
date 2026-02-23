@@ -1,4 +1,8 @@
-import { validateHdOutput } from './schema.mjs';
+import { normalizeCenterKey, normalizeTypeCode, validateHdOutput } from './schema.mjs';
+
+function unique(items) {
+  return [...new Set(items)];
+}
 
 export async function fetchBodyGraph(datetimeUtcIso, apiKey) {
   const url = new URL('https://api.bodygraph.info/');
@@ -13,14 +17,29 @@ export async function fetchBodyGraph(datetimeUtcIso, apiKey) {
   const payload = await response.json();
 
   return validateHdOutput({
-    definedCenters: (payload.centers ?? []).filter((c) => c.defined).map((c) => c.key),
-    definedChannels: (payload.channels ?? []).filter((c) => c.defined).map((c) => c.key),
-    activeGates: (payload.gates ?? []).filter((g) => g.active).map((g) => g.gate),
+    definedCenters: unique(
+      (payload.centers ?? [])
+        .filter((c) => c.defined)
+        .map((c) => normalizeCenterKey(String(c.key ?? '')))
+        .filter(Boolean)
+    ),
+    definedChannels: unique(
+      (payload.channels ?? [])
+        .filter((c) => c.defined)
+        .map((c) => String(c.key ?? ''))
+        .filter(Boolean)
+    ),
+    activeGates: unique(
+      (payload.gates ?? [])
+        .filter((g) => g.active)
+        .map((g) => Number(g.gate))
+        .filter((gate) => Number.isInteger(gate) && gate >= 1 && gate <= 64)
+    ),
     meta: {
-      type: payload.type ?? 'unknown',
-      profile: payload.profile ?? 'unknown',
-      authority: payload.authority ?? 'unknown',
-      definition: payload.definition ?? 'unknown'
+      type: normalizeTypeCode(payload.type),
+      profile: String(payload.profile ?? 'unknown'),
+      authority: String(payload.authority ?? 'unknown'),
+      definition: String(payload.definition ?? 'unknown')
     },
     config: {
       tz: 'Asia/Seoul',

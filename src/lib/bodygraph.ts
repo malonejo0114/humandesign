@@ -1,4 +1,8 @@
-import { hdOutputSchema, type HdOutput } from './schema.js';
+import { normalizeCenterKey, normalizeTypeCode, type HdOutput, validateHdOutput } from './schema.js';
+
+function unique<T>(items: T[]): T[] {
+  return [...new Set(items)];
+}
 
 type BodyGraphResponse = {
   type?: string;
@@ -27,12 +31,22 @@ export async function fetchBodyGraph(datetimeUtcIso: string, apiKey: string): Pr
 
   const payload = (await response.json()) as BodyGraphResponse;
 
-  const normalized: HdOutput = {
-    definedCenters: (payload.centers ?? []).filter((c) => c.defined).map((c) => c.key),
-    definedChannels: (payload.channels ?? []).filter((c) => c.defined).map((c) => c.key),
-    activeGates: (payload.gates ?? []).filter((g) => g.active).map((g) => g.gate),
+  return validateHdOutput({
+    definedCenters: unique(
+      (payload.centers ?? [])
+        .filter((c) => c.defined)
+        .map((c) => normalizeCenterKey(c.key))
+        .filter(Boolean)
+    ),
+    definedChannels: unique((payload.channels ?? []).filter((c) => c.defined).map((c) => c.key).filter(Boolean)),
+    activeGates: unique(
+      (payload.gates ?? [])
+        .filter((g) => g.active)
+        .map((g) => g.gate)
+        .filter((gate) => Number.isInteger(gate) && gate >= 1 && gate <= 64)
+    ),
     meta: {
-      type: payload.type ?? 'unknown',
+      type: normalizeTypeCode(payload.type),
       profile: payload.profile ?? 'unknown',
       authority: payload.authority ?? 'unknown',
       definition: payload.definition ?? 'unknown'
@@ -46,7 +60,5 @@ export async function fetchBodyGraph(datetimeUtcIso: string, apiKey: string): Pr
       epsilonDeg: Number(process.env.HD_EPSILON_DEG ?? '0.0001'),
       gateWheelVersion: process.env.HD_GATE_WHEEL_VERSION ?? 'v1'
     }
-  };
-
-  return hdOutputSchema.parse(normalized);
+  });
 }

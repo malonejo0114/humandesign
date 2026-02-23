@@ -1,28 +1,3 @@
-import { z } from 'zod';
-
-export const hdOutputSchema = z.object({
-  definedCenters: z.array(z.string()),
-  definedChannels: z.array(z.string()),
-  activeGates: z.array(z.number()),
-  meta: z.object({
-    type: z.string(),
-    profile: z.string(),
-    authority: z.string(),
-    definition: z.string()
-  }),
-  config: z.object({
-    tz: z.literal('Asia/Seoul'),
-    zodiac: z.literal('tropical'),
-    node: z.literal('provider_default'),
-    ephemeris: z.literal('bodygraphinfo'),
-    engineVersion: z.string(),
-    epsilonDeg: z.number(),
-    gateWheelVersion: z.string()
-  })
-});
-
-export type HdOutput = z.infer<typeof hdOutputSchema>;
-
 export const typeLabelMap: Record<string, string> = {
   mg: 'Manifesting Generator',
   ge: 'Generator',
@@ -36,10 +11,48 @@ export const centerMap: Record<string, string> = {
   ajna: 'ajna',
   throat: 'throat',
   g: 'identity',
+  identity: 'identity',
   heart: 'ego',
+  ego: 'ego',
   spleen: 'spleen',
   sacral: 'sacral',
   solar_plexus: 'solarPlexus',
   solar_plexus_center: 'solarPlexus',
+  solarPlexus: 'solarPlexus',
   root: 'root'
 };
+
+export type HdOutput = {
+  definedCenters: string[];
+  definedChannels: string[];
+  activeGates: number[];
+  meta: {
+    type: string;
+    profile: string;
+    authority: string;
+    definition: string;
+  };
+  config: {
+    tz: 'Asia/Seoul';
+    zodiac: 'tropical';
+    node: 'provider_default';
+    ephemeris: 'bodygraphinfo';
+    engineVersion: string;
+    epsilonDeg: number;
+    gateWheelVersion: string;
+  };
+};
+
+export function normalizeCenterKey(key: string): string {
+  return centerMap[key] ?? key;
+}
+
+export function normalizeTypeCode(typeCode?: string): string {
+  if (!typeCode) return 'unknown';
+  const normalized = String(typeCode).toLowerCase();
+  return typeLabelMap[normalized] ? normalized : 'unknown';
+}
+
+export function validateHdOutput(data: HdOutput): HdOutput {
+  return data;
+}

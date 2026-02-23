@@ -23,3 +23,13 @@ test('rejects unsupported timezone', () => {
     });
   }, /Asia\/Seoul only/);
 });
+
+test('rejects impossible date values', () => {
+  assert.throws(() => {
+    toUtcWithAudit({
+      localDate: '1980-02-31',
+      localTime: '09:00:00',
+      timezone: 'Asia/Seoul'
+    });
+  }, /day out of range/);
+});

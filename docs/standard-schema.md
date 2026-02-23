@@ -48,6 +48,14 @@
 - `g` → `identity`
 - `heart` → `ego`
 
+## Anchor-4 verification
+
+`tests/fixtures/anchor4.golden.json` is verified by `pnpm test:anchor4`.
+
+- If `BODYGRAPH_API_KEY` is missing, the command exits cleanly (skip mode).
+- If golden values are `TBD`, script prints observed values to help seed fixtures.
+- If golden values are populated and mismatched, command fails with diff output.
+
 ## Fingerprint policy
 
 Persist `config` on `charts` and `reports` rows to trace rendering/output drift caused by engine upgrades.

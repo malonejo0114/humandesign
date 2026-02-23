@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "node src/index.mjs",
     "test": "node --test tests/*.test.mjs",
-    "lint": "node --check src/index.mjs src/lib/*.mjs"
+    "lint": "node --check src/index.mjs src/lib/*.mjs scripts/*.mjs",
+    "test:anchor4": "node scripts/anchor4-check.mjs"
   }
 }

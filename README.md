@@ -22,4 +22,7 @@ Copy `.env.example` and set:
 ```bash
 pnpm lint
 pnpm test
+pnpm test:anchor4
 ```
+
+> `pnpm test:anchor4` skips automatically when `BODYGRAPH_API_KEY` is not set.
