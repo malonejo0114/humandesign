@@ -1,0 +1,47 @@
+[
+  {
+    "inputUtc": "1980-01-01T00:00:00Z",
+    "anchor4": {
+      "personalitySun": "38.1",
+      "personalityEarth": "39.1",
+      "designSun": "48.3",
+      "designEarth": "21.3"
+    }
+  },
+  {
+    "inputUtc": "1990-06-15T12:00:00Z",
+    "anchor4": {
+      "personalitySun": "TBD",
+      "personalityEarth": "TBD",
+      "designSun": "TBD",
+      "designEarth": "TBD"
+    }
+  },
+  {
+    "inputUtc": "2001-09-09T09:09:00Z",
+    "anchor4": {
+      "personalitySun": "TBD",
+      "personalityEarth": "TBD",
+      "designSun": "TBD",
+      "designEarth": "TBD"
+    }
+  },
+  {
+    "inputUtc": "1975-12-31T23:59:59Z",
+    "anchor4": {
+      "personalitySun": "TBD",
+      "personalityEarth": "TBD",
+      "designSun": "TBD",
+      "designEarth": "TBD"
+    }
+  },
+  {
+    "inputUtc": "2010-03-20T00:00:00Z",
+    "anchor4": {
+      "personalitySun": "TBD",
+      "personalityEarth": "TBD",
+      "designSun": "TBD",
+      "designEarth": "TBD"
+    }
+  }
+]
