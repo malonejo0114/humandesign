@@ -5,18 +5,75 @@
   --muted: #a4adc9;
   --active: #54e3a4;
   --inactive: #3e4468;
+  --mobile-width: 390px;
 }
-body { margin: 0; font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); }
-main { max-width: 980px; margin: 0 auto; padding: 24px; display: grid; gap: 16px; }
-.panel { background: var(--panel); border: 1px solid #2a3152; border-radius: 12px; padding: 16px; }
-label { display: block; margin: 8px 0; color: var(--muted); }
-button { margin-top: 8px; margin-right: 8px; padding: 8px 12px; border-radius: 8px; border: 0; background: #5c7cff; color: white; }
-.badge { display: inline-block; margin-top: 10px; background: #4a2c00; color: #ffd8a8; padding: 6px 10px; border-radius: 999px; font-size: 12px; }
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  justify-content: center;
+}
+
+main {
+  width: var(--mobile-width);
+  min-width: var(--mobile-width);
+  max-width: var(--mobile-width);
+  min-height: 100vh;
+  padding: 16px 12px 28px;
+  display: grid;
+  gap: 12px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid #2a3152;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+h1, h2 { margin: 0 0 10px; font-size: 16px; }
+label { display: block; margin: 8px 0; color: var(--muted); font-size: 13px; }
+input[type='date'], input[type='time'] { width: 100%; margin-top: 4px; }
+
+button {
+  margin-top: 8px;
+  margin-right: 6px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 0;
+  background: #5c7cff;
+  color: white;
+  font-size: 12px;
+}
+
+.badge {
+  display: inline-block;
+  margin-top: 10px;
+  background: #4a2c00;
+  color: #ffd8a8;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
 .center,.channel,.gate { stroke: #0d1020; stroke-width: 2; fill: var(--inactive); }
 .channel { fill: none; stroke: var(--inactive); stroke-width: 6; stroke-linecap: round; }
 .center.active,.gate.active { fill: var(--active); }
 .channel.active { stroke: var(--active); }
-#status { color: var(--muted); margin-top: 8px; }
-#summary { color: #cfd6f3; }
 
-#metrics { background:#0b1020; color:#a9b7ff; padding:10px; border-radius:8px; overflow:auto; max-height:180px; }
+#graph-output svg { width: 100%; height: auto; display: block; }
+#status { color: var(--muted); margin-top: 8px; font-size: 13px; }
+#summary { color: #cfd6f3; margin: 10px 0; padding-left: 18px; font-size: 13px; }
+#metrics {
+  background:#0b1020;
+  color:#a9b7ff;
+  padding:10px;
+  border-radius:8px;
+  overflow:auto;
+  max-height:180px;
+  font-size: 12px;
+}

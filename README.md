@@ -14,6 +14,8 @@ pnpm dev
 
 ## Demo flow
 
+- UI 레이아웃은 모바일 고정 폭(390px)으로 동작
+
 1. 생년월일/출생시간 입력 후 `렌더 업데이트` 클릭
 2. 서버가 `Asia/Seoul -> UTC` 변환 후 차트 JSON 반환
 3. UI가 JSON 기반 SVG를 토글 렌더 (동일 입력은 캐시 HIT)
