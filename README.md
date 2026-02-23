@@ -9,8 +9,15 @@ pnpm install
 pnpm dev
 ```
 
-- Web UI demo: `http://127.0.0.1:4173`
-- API/utility sample runner: `pnpm dev:api`
+- Web + API demo: `http://127.0.0.1:4173`
+- Utility sample runner: `pnpm dev:api`
+
+## Demo flow
+
+1. 생년월일/출생시간 입력 후 `렌더 업데이트` 클릭
+2. 서버가 `Asia/Seoul -> UTC` 변환 후 차트 JSON 반환
+3. UI가 JSON 기반 SVG를 토글 렌더
+4. `Basic 리포트 다운로드` 클릭 시 HTML 리포트 다운로드
 
 ## Required env
 

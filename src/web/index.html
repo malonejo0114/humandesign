@@ -11,17 +11,19 @@
       <section class="panel">
         <h1>입력 UI (정확/대략/모름) 데모</h1>
         <form id="input-form">
-          <label>생년월일 <input type="date" required /></label>
-          <label>출생시간 <input type="time" /></label>
+          <label>생년월일 <input id="birth-date" type="date" required /></label>
+          <label>출생시간 <input id="birth-time" type="time" step="1" /></label>
           <label><input type="radio" name="birth-time-mode" value="exact" checked /> 정확</label>
           <label><input type="radio" name="birth-time-mode" value="approx" /> 대략</label>
           <label><input type="radio" name="birth-time-mode" value="unknown" /> 모름</label>
           <button type="submit">렌더 업데이트</button>
+          <button type="button" id="download-report">Basic 리포트 다운로드</button>
         </form>
         <div id="status">대기 중</div>
         <div id="time-unknown-badge" class="badge" hidden>
           출생시간 모름: 일부 항목은 후보/범위로 표시됩니다.
         </div>
+        <ul id="summary"></ul>
       </section>
 
       <section class="panel">
