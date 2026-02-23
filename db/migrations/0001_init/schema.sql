@@ -1,0 +1,34 @@
+CREATE TABLE IF NOT EXISTS users (
+  id UUID PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS charts (
+  id UUID PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES users(id),
+  raw_input JSONB NOT NULL,
+  utc_dt TIMESTAMPTZ NOT NULL,
+  output_json JSONB NOT NULL,
+  engine_version TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS reports (
+  id UUID PRIMARY KEY,
+  chart_id UUID NOT NULL REFERENCES charts(id),
+  report_type TEXT NOT NULL,
+  status TEXT NOT NULL,
+  file_url TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS jobs (
+  id UUID PRIMARY KEY,
+  job_type TEXT NOT NULL,
+  payload JSONB NOT NULL,
+  status TEXT NOT NULL,
+  attempts INT NOT NULL DEFAULT 0,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

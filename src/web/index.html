@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HumanDesign MVP Renderer</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main>
+      <header class="appbar" role="banner">
+        <button class="icon-btn" aria-label="뒤로">←</button>
+        <strong>HumanDesign</strong>
+        <button class="icon-btn" aria-label="설정">⚙</button>
+      </header>
+
+      <section class="panel hero-panel">
+        <div class="hero-head">
+          <h1>BodyGraph</h1>
+          <div class="zoom-controls">
+            <button id="zoom-in" class="icon-btn" aria-label="확대">＋</button>
+            <button id="zoom-reset" class="icon-btn" aria-label="리셋">⟲</button>
+          </div>
+        </div>
+        <div id="graph-output" class="bodygraph" aria-live="polite"></div>
+      </section>
+
+      <section class="panel">
+        <form id="input-form">
+          <label>생년월일 <input id="birth-date" type="date" required /></label>
+          <label>출생시간 <input id="birth-time" type="time" step="1" /></label>
+          <label><input type="radio" name="birth-time-mode" value="exact" checked /> 정확</label>
+          <label><input type="radio" name="birth-time-mode" value="approx" /> 대략</label>
+          <label><input type="radio" name="birth-time-mode" value="unknown" /> 모름</label>
+          <button type="submit" class="btn-primary">렌더 업데이트</button>
+        </form>
+
+        <div id="time-unknown-badge" class="badge" hidden>
+          출생시간 모름: 일부 항목은 후보/범위로 표시됩니다.
+        </div>
+
+        <div class="card-stack">
+          <article class="card card-type" role="group"><h3>Type</h3><p id="type-value">-</p></article>
+          <article class="card card-strategy" role="group"><h3>Strategy</h3><p id="strategy-value">-</p></article>
+          <article class="card card-authority" role="group"><h3>Authority</h3><p id="authority-value">-</p></article>
+          <article class="card card-range" role="group">
+            <h3>출생시간 모름 Range</h3>
+            <input id="range-slider" type="range" min="0" max="2" value="1" aria-label="출생시간 범위" />
+            <div id="candidate-chips" class="chips" role="listbox" aria-label="후보 차트"></div>
+          </article>
+          <article class="card card-paywall" role="group">
+            <h3>정밀 리포트 잠금</h3>
+            <p>개인화 심화 해석 2줄 미리보기</p>
+            <button id="unlock-btn" class="btn-primary" aria-label="정밀 리포트 열기" type="button">언락</button>
+            <button type="button" id="download-report" class="btn-ghost" aria-label="PDF 다운로드" disabled>PDF 다운로드</button>
+          </article>
+        </div>
+
+        <button type="button" id="refresh-metrics" class="btn-ghost">Metrics 새로고침</button>
+        <div id="status">대기 중</div>
+        <pre id="metrics"></pre>
+      </section>
+    </main>
+
+    <aside id="sheet" class="sheet" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="sheet-content">
+        <div class="sheet-head">
+          <strong id="sheet-title">상세</strong>
+          <button id="close-sheet" class="icon-btn" aria-label="닫기">✕</button>
+        </div>
+        <p id="sheet-body">게이트/채널 설명</p>
+      </div>
+    </aside>
+
+    <script type="module" src="/app.mjs"></script>
+  </body>
+</html>
