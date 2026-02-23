@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HumanDesign MVP Renderer</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main>
+      <section class="panel">
+        <h1>입력 UI (정확/대략/모름) 데모</h1>
+        <form id="input-form">
+          <label>생년월일 <input type="date" required /></label>
+          <label>출생시간 <input type="time" /></label>
+          <label><input type="radio" name="birth-time-mode" value="exact" checked /> 정확</label>
+          <label><input type="radio" name="birth-time-mode" value="approx" /> 대략</label>
+          <label><input type="radio" name="birth-time-mode" value="unknown" /> 모름</label>
+          <button type="submit">렌더 업데이트</button>
+        </form>
+        <div id="status">대기 중</div>
+        <div id="time-unknown-badge" class="badge" hidden>
+          출생시간 모름: 일부 항목은 후보/범위로 표시됩니다.
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>JSON → SVG BodyGraph 토글 데모</h2>
+        <div id="graph-output"></div>
+      </section>
+    </main>
+
+    <script type="module" src="/app.mjs"></script>
+  </body>
+</html>

@@ -1,6 +1,6 @@
 # humandesign
 
-Sprint 0 bootstrap for Human Design MVP.
+Sprint 0/1 bootstrap for Human Design MVP.
 
 ## Local dev
 
@@ -8,6 +8,9 @@ Sprint 0 bootstrap for Human Design MVP.
 pnpm install
 pnpm dev
 ```
+
+- Web UI demo: `http://127.0.0.1:4173`
+- API/utility sample runner: `pnpm dev:api`
 
 ## Required env
 
