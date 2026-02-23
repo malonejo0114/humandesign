@@ -1,4 +1,5 @@
 import { renderBodyGraphSvg } from './renderer.mjs';
+import { requestBasicReportWithRetry } from './report-client.mjs';
 
 const form = document.getElementById('input-form');
 const output = document.getElementById('graph-output');
@@ -20,6 +21,7 @@ function renderSummary(payload) {
     <li>Profile: ${meta.profile ?? 'unknown'}</li>
     <li>Authority: ${meta.authority ?? 'unknown'}</li>
     <li>UTC: ${payload.utcAudit.utcIso}</li>
+    <li>입력 모드: ${payload.input.mode ?? 'exact'}</li>
   `;
 }
 
@@ -65,19 +67,19 @@ downloadBtn.addEventListener('click', async () => {
     return;
   }
 
-  const response = await fetch('/api/report/basic', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(latestPayload)
-  });
+  status.textContent = '리포트 생성 중...';
 
-  const html = await response.text();
-  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'hd-basic-report.html';
-  a.click();
-  URL.revokeObjectURL(url);
-  status.textContent = 'Basic 리포트 HTML 다운로드 완료';
+  try {
+    const html = await requestBasicReportWithRetry(latestPayload, { retries: 1 });
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'hd-basic-report.html';
+    a.click();
+    URL.revokeObjectURL(url);
+    status.textContent = 'Basic 리포트 HTML 다운로드 완료';
+  } catch (error) {
+    status.textContent = `리포트 생성 실패: ${error instanceof Error ? error.message : 'unknown'}`;
+  }
 });
