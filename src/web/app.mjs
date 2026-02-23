@@ -6,7 +6,9 @@ const output = document.getElementById('graph-output');
 const badge = document.getElementById('time-unknown-badge');
 const status = document.getElementById('status');
 const summary = document.getElementById('summary');
+const metricsEl = document.getElementById('metrics');
 const downloadBtn = document.getElementById('download-report');
+const refreshMetricsBtn = document.getElementById('refresh-metrics');
 
 let latestPayload = null;
 
@@ -41,6 +43,16 @@ async function requestChart(localDate, localTime, mode) {
   return response.json();
 }
 
+async function refreshMetrics() {
+  const response = await fetch('/api/metrics');
+  if (!response.ok) {
+    metricsEl.textContent = 'metrics 조회 실패';
+    return;
+  }
+  const metrics = await response.json();
+  metricsEl.textContent = JSON.stringify(metrics, null, 2);
+}
+
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
 
@@ -57,6 +69,7 @@ form.addEventListener('submit', async (event) => {
     render(payload.hd);
     renderSummary(payload);
     status.textContent = '입력→UTC→차트 렌더 완료';
+    await refreshMetrics();
   } catch (error) {
     status.textContent = `오류: ${error instanceof Error ? error.message : 'unknown'}`;
   }
@@ -80,7 +93,11 @@ downloadBtn.addEventListener('click', async () => {
     a.click();
     URL.revokeObjectURL(url);
     status.textContent = 'Basic 리포트 HTML 다운로드 완료';
+    await refreshMetrics();
   } catch (error) {
     status.textContent = `리포트 생성 실패: ${error instanceof Error ? error.message : 'unknown'}`;
   }
 });
+
+refreshMetricsBtn.addEventListener('click', refreshMetrics);
+refreshMetrics();

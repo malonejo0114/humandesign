@@ -5,6 +5,7 @@ import { toUtcWithAudit } from '../src/lib/time.mjs';
 import { fetchBodyGraph } from '../src/lib/bodygraph.mjs';
 import { createBasicReportHtml } from '../src/lib/report.mjs';
 import { createChartCacheKey } from '../src/lib/cache-key.mjs';
+import { createMetricsStore, metricsSnapshot, withLatency } from '../src/lib/metrics.mjs';
 
 const root = join(process.cwd(), 'src/web');
 const mime = {
@@ -15,6 +16,7 @@ const mime = {
 };
 
 const chartCache = new Map();
+const metrics = createMetricsStore();
 
 const sampleHd = {
   definedCenters: ['head', 'ajna', 'sacral', 'solarPlexus'],
@@ -44,48 +46,71 @@ async function readJson(req) {
 }
 
 const server = createServer(async (req, res) => {
+  if (req.method === 'GET' && req.url === '/api/metrics') {
+    sendJson(res, 200, metricsSnapshot(metrics));
+    return;
+  }
+
   if (req.method === 'POST' && req.url === '/api/chart') {
+    metrics.chartRequests += 1;
+
     try {
-      const body = await readJson(req);
-      const localTime = body.localTime || '12:00:00';
-      const timezone = body.timezone || 'Asia/Seoul';
-      const input = { localDate: body.localDate, localTime, timezone, mode: body.mode };
-      const cacheKey = createChartCacheKey(input);
+      const payload = await withLatency(async () => {
+        const body = await readJson(req);
+        const localTime = body.localTime || '12:00:00';
+        const timezone = body.timezone || 'Asia/Seoul';
+        const input = { localDate: body.localDate, localTime, timezone, mode: body.mode };
+        const cacheKey = createChartCacheKey(input);
 
-      if (chartCache.has(cacheKey)) {
-        sendJson(res, 200, { ...chartCache.get(cacheKey), cacheHit: true });
-        return;
-      }
-
-      const utcAudit = toUtcWithAudit(input);
-
-      let hd = sampleHd;
-      if (process.env.BODYGRAPH_API_KEY) {
-        try {
-          hd = await fetchBodyGraph(utcAudit.utcIso, process.env.BODYGRAPH_API_KEY);
-        } catch {
-          hd = sampleHd;
+        if (chartCache.has(cacheKey)) {
+          metrics.chartCacheHits += 1;
+          return { ...chartCache.get(cacheKey), cacheHit: true };
         }
-      }
 
-      const payload = { input, utcAudit, hd, cacheHit: false };
-      chartCache.set(cacheKey, payload);
+        const utcAudit = toUtcWithAudit(input);
+
+        let hd = sampleHd;
+        if (process.env.BODYGRAPH_API_KEY) {
+          try {
+            hd = await fetchBodyGraph(utcAudit.utcIso, process.env.BODYGRAPH_API_KEY);
+          } catch {
+            metrics.providerFallbacks += 1;
+            hd = sampleHd;
+          }
+        }
+
+        const result = { input, utcAudit, hd, cacheHit: false };
+        chartCache.set(cacheKey, result);
+        return result;
+      }, (latency) => {
+        metrics.totalChartLatencyMs += latency;
+      });
+
       sendJson(res, 200, payload);
       return;
     } catch (error) {
+      metrics.chartFailures += 1;
       sendJson(res, 400, { error: error instanceof Error ? error.message : 'invalid request' });
       return;
     }
   }
 
   if (req.method === 'POST' && req.url === '/api/report/basic') {
+    metrics.reportRequests += 1;
+
     try {
-      const body = await readJson(req);
-      const html = createBasicReportHtml(body);
+      const html = await withLatency(async () => {
+        const body = await readJson(req);
+        return createBasicReportHtml(body);
+      }, (latency) => {
+        metrics.totalReportLatencyMs += latency;
+      });
+
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
       res.end(html);
       return;
     } catch (error) {
+      metrics.reportFailures += 1;
       sendJson(res, 400, { error: error instanceof Error ? error.message : 'invalid request' });
       return;
     }

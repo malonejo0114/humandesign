@@ -18,12 +18,14 @@
           <label><input type="radio" name="birth-time-mode" value="unknown" /> 모름</label>
           <button type="submit">렌더 업데이트</button>
           <button type="button" id="download-report">Basic 리포트 다운로드</button>
+          <button type="button" id="refresh-metrics">Metrics 새로고침</button>
         </form>
         <div id="status">대기 중</div>
         <div id="time-unknown-badge" class="badge" hidden>
           출생시간 모름: 일부 항목은 후보/범위로 표시됩니다.
         </div>
         <ul id="summary"></ul>
+        <pre id="metrics"></pre>
       </section>
 
       <section class="panel">

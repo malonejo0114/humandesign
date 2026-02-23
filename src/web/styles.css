@@ -18,3 +18,5 @@ button { margin-top: 8px; margin-right: 8px; padding: 8px 12px; border-radius: 8
 .channel.active { stroke: var(--active); }
 #status { color: var(--muted); margin-top: 8px; }
 #summary { color: #cfd6f3; }
+
+#metrics { background:#0b1020; color:#a9b7ff; padding:10px; border-radius:8px; overflow:auto; max-height:180px; }

@@ -18,6 +18,7 @@ pnpm dev
 2. 서버가 `Asia/Seoul -> UTC` 변환 후 차트 JSON 반환
 3. UI가 JSON 기반 SVG를 토글 렌더 (동일 입력은 캐시 HIT)
 4. `Basic 리포트 다운로드` 클릭 시 HTML 리포트 다운로드 (실패 시 1회 재시도)
+5. `Metrics 새로고침` 버튼으로 chart/report 요청수, cache hit, 실패수, 평균 응답시간 확인
 
 ## Required env
 
